@@ -1,3 +1,3 @@
-# comm-cosmic
+# pkgbuild-template
 
-Meta-package with the Cosmic DE
+Package description
