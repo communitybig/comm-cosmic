@@ -305,9 +305,7 @@ EOF
 	if [ -f "README.md" ]; then
 		install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
 	fi
-    
-     # Criar diretório para scripts
-    mkdir -p "${pkgdir}/usr/share/comm-cosmic/scripts"
+   
     
 
 }
