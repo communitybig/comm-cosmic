@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Config file path
+configFile="/etc/lightdm/slick-greeter.conf"
+
+# Original and new wallpaper paths
+originalWallpaper="/usr/share/slick-greeter/slick-greeter.png"
+newWallpaper="/usr/share/backgrounds/lightdm-default.jpg"
+
+# Check if config file exists
+if [ -f "$configFile" ]; then
+   # Make backup of original config if doesn't exist
+   if [ ! -f "${configFile}.bak" ]; then
+       cp "$configFile" "${configFile}.bak"
+   fi
+
+   # Make backup of original wallpaper if doesn't exist
+   if [ -f "$originalWallpaper" ] && [ ! -f "${originalWallpaper}.bak" ]; then
+       cp "$originalWallpaper" "${originalWallpaper}.bak"
+   fi
+
+   # Update configuration
+   if [ -f "$newWallpaper" ]; then
+       # If file exists, update only background path
+       sed -i "s|^background=.*|background=$newWallpaper|" "$configFile"
+   else
+       echo "Error: New wallpaper not found in $newWallpaper"
+       exit 1
+   fi
+else
+   # If file doesn't exist, create with correct configuration
+   echo "[Greeter]" > "$configFile"
+   echo "background=$newWallpaper" >> "$configFile"
+fi
+
+exit 0

@@ -1,0 +1,12 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = comm-i3wm
+Target = btop
+
+[Action]
+Description = btop terminal preferences
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/btop-desktop
+NeedsTargets

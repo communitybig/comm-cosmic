@@ -1,0 +1,12 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = lightdm-slick-greeter
+Target = comm-i3wm
+
+[Action]
+Description = Change the default wallpaper of lightdm-slick-greeter
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/change-files
+NeedsTargets

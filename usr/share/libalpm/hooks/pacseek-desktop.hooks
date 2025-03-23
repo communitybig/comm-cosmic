@@ -1,0 +1,12 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = comm-i3wm
+Target = pacseek
+
+[Action]
+Description = pacseek terminal preferences
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/pacseek-desktop
+NeedsTargets

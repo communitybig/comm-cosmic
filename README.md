@@ -1,3 +1,3 @@
-# pkgbuild-template-meta-package
+# pkgbuild-template
 
-Template for meta packages
+Package description
