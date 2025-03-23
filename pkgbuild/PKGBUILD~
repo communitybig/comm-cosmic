@@ -1,4 +1,4 @@
-# Maintainer: Float <floatingfloatskies@protonmail.com>
+# Maintainer: Ari Novais (Float) <floatingfloatskies@protonmail.com>
 # Contributor: Narayan Silva <narayanlimasilva@gmail.com>
 
 pkgname=comm-cosmic
@@ -8,7 +8,7 @@ pkgrel=1
 arch=('any')
 license=('MIT')
 url="https://github.com/communitybig/${pkgname}"
-source=("git+${url}.git#commit=COMMIT_HASH")
+source=("git+${url}.git")
 md5sums=('SKIP')
 depends=(
     cosmic
