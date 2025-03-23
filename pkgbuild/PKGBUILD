@@ -148,16 +148,13 @@ optdepends=(
     simplescreenrecorder
     python-pywal
 
-  # Pacotes da comunidade
-  comm-base-config
-  auto-tweaks-browser 
-  big
-  bigcontrolcenter-base 
-  comm-webapps            
-  comm-restore-config
-  #chili-utils
-  #chili-iso2usb
-  #chili-clonedisk
+   # Pacotes da comunidade
+   comm-base-config
+   auto-tweaks-browser 
+   big
+   bigcontrolcenter-base 
+   comm-webapps            
+   comm-restore-config
 
     # Ferramentas específicas do Big Linux
     big-mount
@@ -197,7 +194,7 @@ optdepends=(
     xorg-xwayland            # Suporte para aplicativos X11 no Wayland
     wayland                  # Protocolo Wayland
     wayland-utils            # Ferramentas para Wayland
-  wlr-randr                # Alternativa ao xrandr para Wayland
+    wlr-randr                # Alternativa ao xrandr para Wayland
 
     # Ferramentas extras e utilitários
     clang
