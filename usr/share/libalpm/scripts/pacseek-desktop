@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+# Diretório onde o arquivo personalizado está armazenado
+CUSTOM_DIR="/usr/share/applications"
+TARGET_FILE="/usr/share/applications/org.moson.pacseek.desktop"
+CUSTOM_FILE="${CUSTOM_DIR}/org.moson.pacseek.desktop"
+
+# Criar o diretório para armazenar nosso arquivo personalizado
+mkdir -p "${CUSTOM_DIR}"
+
+# Verificar se o arquivo original existe
+if [ -f "${TARGET_FILE}" ]; then
+    # Fazer backup do arquivo original se ainda não existe
+    if [ ! -f "${TARGET_FILE}.orig" ]; then
+        cp -f "${TARGET_FILE}" "${TARGET_FILE}.orig"
+    fi
+
+    # Criar nosso arquivo personalizado com o conteúdo modificado
+    cat > "${CUSTOM_FILE}" << 'EOF'
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=pacseek
+Comment=A terminal user interface for searching and installing Arch Linux packages
+Icon=pacseek
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- pacseek; elif command -v kitty >/dev/null; then kitty pacseek; elif command -v konsole >/dev/null; then konsole -e pacseek; else x-terminal-emulator -e pacseek; fi"
+Terminal=false
+Categories=System;Monitor;ConsoleOnly;
+Keywords=system;process;task
+
+Actions=SoftwareRender;
+
+[Desktop Action SoftwareRender]
+Name=Software Render
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- env SoftwareRender=1 pacseek; elif command -v kitty >/dev/null; then kitty env SoftwareRender=1 pacseek; elif command -v konsole >/dev/null; then konsole -e env SoftwareRender=1 pacseek; else x-terminal-emulator -e env SoftwareRender=1 pacseek; fi"
+EOF
+
+    # Copiar nosso arquivo personalizado para a localização correta
+    cp -f "${CUSTOM_FILE}" "${TARGET_FILE}"
+    echo "Arquivo pacseek.desktop atualizado com sucesso."
+else
+    echo "Arquivo pacseek.desktop não encontrado. Verifique a instalação do pacote pacseek."
+fi

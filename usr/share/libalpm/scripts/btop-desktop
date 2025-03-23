@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# Diretório onde o arquivo personalizado está armazenado
+CUSTOM_DIR="/usr/share/applications"
+TARGET_FILE="/usr/share/applications/btop.desktop"
+CUSTOM_FILE="${CUSTOM_DIR}/btop.desktop"
+
+# Criar o diretório para armazenar nosso arquivo personalizado
+mkdir -p "${CUSTOM_DIR}"
+
+# Verificar se o arquivo original existe
+if [ -f "${TARGET_FILE}" ]; then
+    # Fazer backup do arquivo original se ainda não existe
+    if [ ! -f "${TARGET_FILE}.orig" ]; then
+        cp -f "${TARGET_FILE}" "${TARGET_FILE}.orig"
+    fi
+
+    # Criar nosso arquivo personalizado com o conteúdo modificado
+    cat > "${CUSTOM_FILE}" << 'EOF'
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=btop++
+GenericName=System Monitor
+Comment=Resource monitor that shows usage and stats for processor, memory, disks, network and processes
+Icon=btop
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- btop; elif command -v kitty >/dev/null; then kitty btop; elif command -v konsole >/dev/null; then konsole -e btop; else x-terminal-emulator -e btop; fi"
+Terminal=false
+Categories=System;Monitor;ConsoleOnly;
+Keywords=system;process;task
+
+Actions=SoftwareRender;
+
+[Desktop Action SoftwareRender]
+Name=Software Render
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- env SoftwareRender=1 btop; elif command -v kitty >/dev/null; then kitty env SoftwareRender=1 btop; elif command -v konsole >/dev/null; then konsole -e env SoftwareRender=1 btop; else x-terminal-emulator -e env SoftwareRender=1 btop; fi"
+EOF
+
+    # Copiar nosso arquivo personalizado para a localização correta
+    cp -f "${CUSTOM_FILE}" "${TARGET_FILE}"
+    echo "Arquivo btop.desktop atualizado com sucesso."
+else
+    echo "Arquivo btop.desktop não encontrado. Verifique a instalação do pacote btop."
+fi

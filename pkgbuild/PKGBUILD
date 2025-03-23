@@ -1,8 +1,8 @@
-# Maintainer: Vilmar Catafesta <vcatafesta@gmail.com>
-# Contributor: Tales A. Mendonça <talesam@gmail.com>
+# Maintainer: Float <floatingfloatskies@protonmail.com>
+# Contributor: Narayan Silva <narayanlimasilva@gmail.com>
 
-pkgname=com-template
-pkgdesc="Meta package for comm-template"
+pkgname=comm-cosmic
+pkgdesc="Meta package for Cosmic"
 pkgver=$(date +%Y%m%d)
 pkgrel=$(date +%H%M)
 arch=('any')
@@ -11,36 +11,200 @@ url="https://github.com/communitybig/${pkgname}"
 source=("git+${url}.git")
 md5sums=('SKIP')
 depends=(
-  bash              # coloque aqui o nome do teu principal pacote
+	cosmic
 )
 optdepends=(
-  bash-completion   # coloque aqui o nome dos outros pacotes que fazem parte do meta pacote (um abaixo do outro)
+	#webkit2gtk
+	#umc
+	#'go'
+	#'base-devel'
+	#btop
+	xdg-desktop-portal-gtk
+	xdg-desktop-portal
+	xdg-desktop-portal-xapp
+	eza
+	python-pip
+	python-gobject
+	python-screeninfo
+	tumbler
+	brightnessctl
+	nm-connection-editor
+	network-manager-applet
+	gtk4
+	gtk3
+	libadwaita
+	fuse2
+	imagemagick
+	jq
+	xclip
+    cosmic-terminal
+	sync-gnome-theme-to-qt
+	blueberry
+	scrot
+	qt5ct
+	polkit-gnome
+	polkit
+	zsh
+	zsh-completions
+	fzf
+	pavucontrol
+	bigicons-papient
+	papirus-icon-theme
+	breeze-gtk
+	xcursor-breeze
+	nordic-darker-theme
+	xdg-user-dirs-gtk
+	gvfs
+	gvfs-afc
+	gvfs-mtp
+	gvfs-goa
+	gvfs-smb
+	gvfs-gphoto2
+	otf-font-awesome
+	ttf-fira-sans
+	ttf-fira-code
+	ttf-firacode-nerd
+	ttf-dejavu
+	ttf-nerd-fonts-symbols-with-biglinux
+	oh-my-posh-bin
+	checkupdates-with-aur
+	unarchiver
+    7zip
+	imv
+	ffmpegthumbnailer
+	wireplumber
+	qt5-svg
+	qt5-graphicaleffects
+	qt5-quickcontrols2
+	flatpak
+    pacseek
+	# Audio Dependencies
+	biglinux-meta-audio-config
+	portaudio
+	lib32-portaudio
+	pipewire-alsa
+	pipewire-pulse
+	#pipewire-jack
+	lib32-pipewire
+	libpipewire
+	lib32-libpipewire
+	#lib32-pipewire-jack
+	#pipewire-biglinux-config-git
+	gst-plugin-pipewire
+	manjaro-pipewire
+	pcaudiolib
+	sox
+	#Outros
+	libsndfile
+	lib32-libsndfile
+	xf86-input-elographics
+	xf86-input-evdev
+	xf86-input-libinput
+	xf86-input-vmmouse
+	xf86-input-void
+	timeshift
+	grub-btrfs-timeshift
+	grub-btrfs
+	amd-ucode
+	libxcvt
+	b43-fwcutter
+	glxinfo
+	gnome-disk-utility
+	simplescreenrecorder
+	python-pywal
+	#packages community
+	auto-tweaks-browser # Auto optimize brave, chromium, epiphany, falkon, firefox, google-chrome, opera and vivaldi
+	big-mount
+	comm-base-config # Package configuration BASE
+	#comm-webapps
+	#biglinux-driver-manager
+	#biglinux-noise-reduction-pipewire
+	#bigcontrolcenter-base      # Base files and libs to bigcontrolcenter interfaces
+	#big-store # A friendly interface using bigbashview
+	big-preload
+	#comm-restore-config        # Central de controle para restaurar configurações de ambiente e aplicativos
+	#drivers de vídeo
+	mhwd
+	mhwd-db
+	mhwd-biglinux
+	mhwd-amdgpu
+	mhwd-nvidia
+	mhwd-ati
+	mhwd-nvidia-470xx
+	xf86-video-amdgpu
+	vulkan-mesa-layers
+	lib32-vulkan-mesa-layers
+	vulkan-headers
+	vulkan-tools
+	vulkan-icd-loader
+	lib32-vulkan-icd-loader
+	vulkan-intel
+	lib32-vulkan-intel
+	vulkan-radeon
+	lib32-vulkan-radeon
+	mesa
+	lib32-mesa
+    # Wayland e componentes
+    wayland    
+	# X11 Server and components
+	xorg-server
+	xorg-xinit
+	xorg-xrandr
+	xorg-xrdb
+	xorg-xbacklight
+	xorg-xinput
+	xorg-xkill
+	xorg-xprop
+	xorg-xhost
+	# Cosmic e componentes para funcionamento e configuração
+    cosmic
+    cosmic-session
+    cosmic-files
+    cosmic-applets
+    cosmic-app-library
+    cosmic-applets
+    cosmic-bg
+    cosmic-greeter
+    cosmic-launcher
+    cosmic-idle
+    cosmic-notifications
+    cosmic-osd
+    cosmic-panel
+    cosmic-settings-daemon
+    cosmic-screenshot
+    cosmic-terminal
+    cosmic-settings
+    cosmic-text-editor
+    cosmic-workspaces
+    xdg-desktop-portal-cosmic
+	# Extra
+	clang
+	gnu-free-fonts
+	harfbuzz-icu
+	hyphen
+	inotify-tools
+	inxi
+	libavif
+	lsof
+	ncdu
+	sysstat
+	chafa
+	firefox
+	evince
+	libreoffice-fresh
+	galculator
+	xed
+	pix
+	mpv
+	pantheon-calendar
+
 )
 
-# Automatically detect and use the correct install file
 if [ -e "${pkgname}.install" ]; then
 	install=${pkgname}.install
 elif [ -e "pkgbuild.install" ]; then
 	install=pkgbuild.install
 fi
-
-prepare() {
-	cd "${srcdir}/${pkgname}"
-	# Add any preparation steps here, if needed
-	# For example: patch -p1 < "${srcdir}/patch-file.patch"
-}
-
-build() {
-	cd "${srcdir}/${pkgname}"
-	# Add build steps here, if needed
-	# For example: make
-}
-
-check() {
-	cd "${srcdir}/${pkgname}"
-	# Add check/test steps here, if needed
-	# For example: make check
-}
 
 package() {
 	cd "${srcdir}/${pkgname}"
@@ -62,6 +226,84 @@ package() {
 			cp -a "${srcdir}/${dir}" "${pkgdir}/"
 		fi
 	done
+	
+	# Criar os diretórios necessários
+	mkdir -p "${pkgdir}/etc/lightdm"
+	mkdir -p "${pkgdir}/usr/share/backgrounds"
+	mkdir -p "${pkgdir}/usr/share/libalpm/scripts"
+	mkdir -p "${pkgdir}/usr/share/libalpm/hooks"
+	
+	# Instalar o arquivo de configuração do cosmic-greeter
+	echo "[Greeter]" > "${pkgdir}/etc/cosmic-greeter/config.toml
+	echo "background=/usr/share/backgrounds/owl_neighbourhood.jpg" >> "${pkgdir}/etc/cosmic-greeter/config.toml"
+	
+	# Verificar se há um wallpaper no repositório para copiar
+	if [ -f "${srcdir}/lightdm-default.jpg" ]; then
+		install -Dm644 "${srcdir}/lightdm-default.jpg" "${pkgdir}/usr/share/backgrounds/owl_neighbourhood.jpg"
+	elif [ -f "lightdm-default.jpg" ]; then
+		install -Dm644 "lightdm-default.jpg" "${pkgdir}/usr/share/backgrounds/lightdm-default.jpg"
+	else
+		# Se não encontrar o wallpaper, cria um arquivo vazio como placeholder
+		# (você deve substituir isso por um wallpaper real posteriormente)
+		echo "Warning: Wallpaper não encontrado. Criando um placeholder."
+		touch "${pkgdir}/usr/share/backgrounds/lightdm-default.jpg"
+	fi
+	
+	# Instalar o script e o hook
+	cat > "${pkgdir}/usr/share/libalpm/scripts/change-files" << 'EOF'
+#!/bin/bash
+
+# Diretórios
+configDir="/etc/lightdm"
+backupDir="/etc/lightdm/backup"
+
+# Arquivos
+configFile="${configDir}/cosmic-greeter.conf"
+backupFile="${backupDir}/cosmic-greeter.conf.original"
+customFile="${configDir}/cosmic-greeter.conf.big"
+
+# Criar diretório de backup se não existir
+mkdir -p "${backupDir}"
+
+# Fazer backup do arquivo original se existir e ainda não tiver backup
+if [ -f "${configFile}" ] && [ ! -f "${backupFile}" ]; then
+    cp "${configFile}" "${backupFile}"
+    echo "Backup do arquivo original criado em: ${backupFile}"
+fi
+
+# Verificar se o arquivo personalizado existe
+if [ -f "${customFile}" ]; then
+    # Copiar o arquivo personalizado
+    cp "${customFile}" "${configFile}"
+    echo "Configuração personalizada do cosmic-greeter aplicada com sucesso"
+    
+    # Definir permissões corretas
+    chmod 644 "${configFile}"
+    chown root:root "${configFile}"
+else
+    echo "ERRO: Arquivo personalizado não encontrado em ${customFile}"
+    exit 1
+fi
+
+exit 0
+EOF
+
+	chmod 755 "${pkgdir}/usr/share/libalpm/scripts/change-files"
+	
+	cat > "${pkgdir}/usr/share/libalpm/hooks/change-files.hook" << 'EOF'
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = lightdm-slick-greeter
+Target = comm-cosmic
+
+[Action]
+Description = Configurando wallpaper personalizado no LightDM Slick Greeter
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/change-files
+NeedsTargets
+EOF
 
 	# Install license file if present
 	if [ -f "LICENSE" ]; then
@@ -72,4 +314,171 @@ package() {
 	if [ -f "README.md" ]; then
 		install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
 	fi
+    
+     # Criar diretório para scripts
+    mkdir -p "${pkgdir}/usr/share/comm-cosmic/scripts"
+    
+    # Criar o script diretamente
+    cat > "${pkgdir}/usr/share/comm-cosmic/scripts/configure-btop.sh" << 'EOF'
+#!/usr/bin/env bash
+
+# Função para configurar o btop
+configure_btop() {
+    echo "Configurando terminal para btop..."
+    
+    # Verificar se o arquivo btop.desktop existe
+    if [ -f /usr/share/applications/btop.desktop ]; then
+        # Backup do arquivo original (opcional)
+        cp -f /usr/share/applications/btop.desktop /usr/share/applications/btop.desktop.bak
+        
+        # Substituir conteúdo
+        cat > /usr/share/applications/btop.desktop << 'EOFINNER'
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=btop++
+GenericName=System Monitor
+Comment=Resource monitor that shows usage and stats for processor, memory, disks, network and processes
+Icon=btop
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- btop; elif command -v kitty >/dev/null; then kitty btop; elif command -v konsole >/dev/null; then konsole -e btop; else x-terminal-emulator -e btop; fi"
+Terminal=false
+Categories=System;Monitor;ConsoleOnly;
+Keywords=system;process;task
+
+Actions=SoftwareRender;
+
+[Desktop Action SoftwareRender]
+Name=Software Render
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- env SoftwareRender=1 btop; elif command -v kitty >/dev/null; then kitty env SoftwareRender=1 btop; elif command -v konsole >/dev/null; then konsole -e env SoftwareRender=1 btop; else x-terminal-emulator -e env SoftwareRender=1 btop; fi"
+EOFINNER
+        echo "Configuração do btop concluída."
+    else
+        echo "Arquivo btop.desktop não encontrado. Instalando versão personalizada..."
+        # Criar o arquivo mesmo se não existir
+        cat > /usr/share/applications/btop.desktop << 'EOFINNER'
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=btop++
+GenericName=System Monitor
+Comment=Resource monitor that shows usage and stats for processor, memory, disks, network and processes
+Icon=btop
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- btop; elif command -v kitty >/dev/null; then kitty btop; elif command -v konsole >/dev/null; then konsole -e btop; else x-terminal-emulator -e btop; fi"
+Terminal=false
+Categories=System;Monitor;ConsoleOnly;
+Keywords=system;process;task
+
+Actions=SoftwareRender;
+
+[Desktop Action SoftwareRender]
+Name=Software Render
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- env SoftwareRender=1 btop; elif command -v kitty >/dev/null; then kitty env SoftwareRender=1 btop; elif command -v konsole >/dev/null; then konsole -e env SoftwareRender=1 btop; else x-terminal-emulator -e env SoftwareRender=1 btop; fi"
+EOFINNER
+        echo "Versão personalizada do btop.desktop instalada."
+    fi
+}
+
+# Executar a função
+configure_btop
+EOF
+    
+    # Tornar o script executável
+    chmod 755 "${pkgdir}/usr/share/comm-cosmic/scripts/configure-btop.sh"
+
+    # Criar o script para configurar o pacseek
+    cat > "${pkgdir}/usr/share/comm-cosmic/configure-pacseek.sh" << 'EOF'
+#!/usr/bin/env bash
+
+# Função para configurar o pacseek
+configure_pacseek() {
+    echo "Configurando terminal para pacseek..."
+    
+    # Verificar se o arquivo pacseek.desktop existe
+    if [ -f /usr/share/applications/org.moson.pacseek.desktop ]; then
+        # Backup do arquivo original (opcional)
+        cp -f /usr/share/applications/org.moson.pacseek.desktop /usr/share/applications/org.moson.pacseek.desktop.bak
+        
+        # Substituir conteúdo
+        cat > /usr/share/applications/org.moson.pacseek.desktop << 'EOFINNER'
+[Desktop Entry]
+
+Name=pacseek
+Comment=A terminal user interface for searching and installing Arch Linux packages
+
+Icon=pacseek
+Type=Application
+Categories=Utility;
+Keywords=terminal;package;
+
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- pacseek; elif command -v kitty >/dev/null; then kitty pacseek; elif command -v konsole >/dev/null; then konsole -e pacseek; else x-terminal-emulator -e pacseek; fi"
+Terminal=false
+StartupNotify=false
+
+[Desktop Action SoftwareRender]
+Name=Software Render
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- pacseek; elif command -v kitty >/dev/null; then kitty pacseek; elif command -v konsole >/dev/null; then konsole -e pacseek; else x-terminal-emulator -e pacseek; fi"
+EOFINNER
+        echo "Configuração do pacseek concluída."
+    else
+        echo "Arquivo org.moson.pacseek.desktop não encontrado. Verificando localizações alternativas..."
+        
+        # Verificar se existe em outra localização
+        if [ -f /usr/share/applications/pacseek.desktop ]; then
+            cp -f /usr/share/applications/pacseek.desktop /usr/share/applications/pacseek.desktop.bak
+            
+            cat > /usr/share/applications/pacseek.desktop << 'EOFINNER'
+[Desktop Entry]
+
+Name=pacseek
+Comment=A terminal user interface for searching and installing Arch Linux packages
+
+Icon=pacseek
+Type=Application
+Categories=Utility;
+Keywords=terminal;package;
+
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- pacseek; elif command -v kitty >/dev/null; then kitty pacseek; elif command -v konsole >/dev/null; then konsole -e pacseek; else x-terminal-emulator -e pacseek; fi"
+Terminal=false
+StartupNotify=false
+
+[Desktop Action SoftwareRender]
+Name=Software Render
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- pacseek; elif command -v kitty >/dev/null; then kitty pacseek; elif command -v konsole >/dev/null; then konsole -e pacseek; else x-terminal-emulator -e pacseek; fi"
+EOFINNER
+            echo "Configuração do pacseek concluída em localização alternativa."
+        else
+            echo "Pacseek não parece estar instalado. Criando arquivo de desktop..."
+            # Criar o arquivo de desktop para quando pacseek for instalado
+            cat > /usr/share/applications/org.moson.pacseek.desktop << 'EOFINNER'
+[Desktop Entry]
+
+Name=pacseek
+Comment=A terminal user interface for searching and installing Arch Linux packages
+
+Icon=pacseek
+Type=Application
+Categories=Utility;
+Keywords=terminal;package;
+
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- pacseek; elif command -v kitty >/dev/null; then kitty pacseek; elif command -v konsole >/dev/null; then konsole -e pacseek; else x-terminal-emulator -e pacseek; fi"
+Terminal=false
+StartupNotify=false
+
+[Desktop Action SoftwareRender]
+Name=Software Render
+Exec=sh -c "if command -v gnome-terminal >/dev/null; then gnome-terminal -- pacseek; elif command -v kitty >/dev/null; then kitty pacseek; elif command -v konsole >/dev/null; then konsole -e pacseek; else x-terminal-emulator -e pacseek; fi"
+EOFINNER
+            echo "Arquivo de desktop para pacseek criado."
+        fi
+    fi
+}
+
+# Executar a função
+configure_pacseek
+EOF
+    
+    # Tornar o script executável
+    chmod 755 "${pkgdir}/usr/share/comm-cosmic/scripts/configure-pacseek.sh"
+    
+
 }
