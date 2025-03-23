@@ -12,9 +12,29 @@ source=("git+${url}.git")
 md5sums=('SKIP')
 depends=(
     cosmic-greeter
+    cosmic-session
 )
 optdepends=(
+    # Componentes Cosmic
+    cosmic-files
+    cosmic-applets
+    cosmic-app-library
+    cosmic-bg
+    cosmic-greeter
+    cosmic-launcher
+    cosmic-idle
+    cosmic-notifications
+    cosmic-osd
+    cosmic-panel
+    cosmic-settings-daemon
+    cosmic-screenshot
+    cosmic-terminal
+    cosmic-settings
+    cosmic-text-editor
+    cosmic-workspaces
+    cosmic-store
     # Ferramentas relacionadas ao portal e integração
+    xdg-desktop-portal-cosmic
     xdg-desktop-portal-gtk
     xdg-desktop-portal
     xdg-desktop-portal-xapp
@@ -29,7 +49,7 @@ optdepends=(
 
     # Gerenciamento de rede
     nm-connection-editor
-    network-manager-applet
+    
 
     # Dependências GTK e temas
     gtk4
@@ -53,13 +73,13 @@ optdepends=(
 
     # Controle de som
     pavucontrol
-
+    
+    # Navegador de Internet
+    firefox
+    
     # Temas e ícones
     bigicons-papient
     papirus-icon-theme
-    breeze-gtk
-    xcursor-breeze
-    nordic-darker-theme
 
     # Diretórios e sistemas de arquivos
     xdg-user-dirs-gtk
@@ -128,8 +148,13 @@ optdepends=(
     simplescreenrecorder
     python-pywal
 
-    # Otimização de navegadores
-    auto-tweaks-browser
+   # Pacotes da comunidade
+   comm-base-config
+   auto-tweaks-browser 
+   big
+   bigcontrolcenter-base 
+   comm-webapps            
+   comm-restore-config
 
     # Ferramentas específicas do Big Linux
     big-mount
@@ -157,33 +182,25 @@ optdepends=(
     lib32-vulkan-radeon
     mesa
     lib32-mesa
-
-    # Wayland e componentes
-    wayland
-
-    # Componentes Cosmic
-    cosmic-session
-    cosmic-files
-    cosmic-applets
-    cosmic-app-library
-    cosmic-bg
-    cosmic-greeter
-    cosmic-launcher
-    cosmic-idle
-    cosmic-notifications
-    cosmic-osd
-    cosmic-panel
-    cosmic-settings-daemon
-    cosmic-screenshot
-    cosmic-terminal
-    cosmic-settings
-    cosmic-text-editor
-    cosmic-workspaces
-    cosmic-store
-    xdg-desktop-portal-cosmic
+    
+    # Xorg
+    xorg-server              # Servidor X11
+    xorg-xinit               # Inicialização do Xorg
+    xorg-xrandr              # Configuração de resolução e monitores
+    xorg-xsetroot            # Permite definir o papel de parede no Xorg
+    xorg-xrdb                # Banco de dados de recursos do X
+    # Wayland
+    wlroots                  # Biblioteca para composição no Wayland
+    xorg-xwayland            # Suporte para aplicativos X11 no Wayland
+    wayland                  # Protocolo Wayland
+    wayland-utils            # Ferramentas para Wayland
+    wlr-randr                # Alternativa ao xrandr para Wayland
 
     # Ferramentas extras e utilitários
     clang
+    notifications-daemon
+    polkit
+    packagekit
     gnu-free-fonts
     harfbuzz-icu
     hyphen
@@ -195,34 +212,47 @@ optdepends=(
     sysstat
     chafa
     firefox
-    evince
+    papers
     libreoffice-fresh
-    galculator
+    gnome-calculator
     xed
     pix
-    mpv
+    vlc
+    polkit
+    packagekit
+    
 )
 
+# Automatically detect and use the correct install file
+if [ -e "${pkgname}.install" ]; then
+	install=${pkgname}.install
+elif [ -e "pkgbuild.install" ]; then
+	install=pkgbuild.install
+fi
+
 package() {
-    # Definir diretórios e variáveis
-    cd "${srcdir}/${pkgname}"
-    local config_dir="${pkgdir}/etc/cosmic-greeter"
-    local backgrounds_dir="${pkgdir}/usr/share/backgrounds"
+	cd "${srcdir}/${pkgname}"
 
-    # Criar os diretórios necessários
-    mkdir -p "${config_dir}"
-    mkdir -p "${backgrounds_dir}"
+#	mkdir -p "${pkgdir}/usr/share/${pkgname}"
+  install -dm755 "${pkgdir}/usr/share/${pkgname}"
+	printf "%s\n" "${optdepends[@]}" >"${pkgdir}/usr/share/${pkgname}/optdepends"
 
-    # Instalar o arquivo de configuração do Cosmic Greeter
-    echo "[Greeter]" > "${config_dir}/config.toml"
-    echo "background=/usr/share/backgrounds/owl_neighbourhood.jpg" >> "${config_dir}/config.toml"
-
-    # Verificar se há um wallpaper no repositório para copiar
-    if [ -f "${srcdir}/owl_neighbourhood.jpg" ]; then
-        install -Dm644 "${srcdir}/owl_neighbourhood.jpg" "${backgrounds_dir}/owl_neighbourhood.jpg"
-    else
-        echo "Warning: Wallpaper não encontrado, criando um placeholder."
-        touch "${backgrounds_dir}/owl_neighbourhood.jpg"
+  # Copiar a estrutura de /etc, /usr e /opt para /usr/share/${pkgname}
+  local dirs=("usr" "etc" "opt")
+  for dir in "${dirs[@]}"; do
+    if [ -d "${srcdir}/${pkgname}/${dir}" ]; then
+      cp -a "${srcdir}/${pkgname}/${dir}" "${pkgdir}/usr/share/${pkgname}/"
     fi
+  done
+
+	# Install license file if present
+	if [ -f "LICENSE" ]; then
+		install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+	fi
+
+	# Install documentation if present
+	if [ -f "README.md" ]; then
+		install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+	fi
 }
 
