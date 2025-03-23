@@ -342,10 +342,18 @@ EOF
 		msg "Upgrade complete."
 	fi
 
+    # Executar o script de configuração do btop
+    /usr/share/comm-cosmic/scripts/configure-btop.sh
+    /usr/share/comm-cosmic/scripts/configure-pacseek.sh
+
 }
 
 post_upgrade() {
 	IS_UPGRADE=true
 	post_install
+    
+    # Executar o script de configuração do btop
+    /usr/share/comm-cosmic/scripts/configure-btop.sh
+    /usr/share/comm-cosmic/scripts/configure-pacseek.sh
 
 }
