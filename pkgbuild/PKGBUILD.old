@@ -1,205 +1,229 @@
-# Maintainer: Narayan Silva<narayanlimasilva@gmail.com>
-# Contributor: Vilmar Catafesta <vcatafesta@gmail.com>
+# Maintainer: Ari Novais (Float) <floatingfloatskies@protonmail.com>
+# Contributor: Narayan Silva <narayanlimasilva@gmail.com>
 
-pkgname=comm-i3wm
-pkgdesc="Meta package for i3wm"
-pkgver=$(date +%Y%m%d)
-pkgrel=$(date +%H%M)
+pkgname=comm-cosmic
+pkgdesc="Meta package for Cosmic"
+pkgver=20250323
+pkgrel=1
 arch=('any')
 license=('MIT')
 url="https://github.com/communitybig/${pkgname}"
 source=("git+${url}.git")
 md5sums=('SKIP')
 depends=(
-	i3-wm
+    cosmic-greeter
+    cosmic-session
 )
 optdepends=(
-	#webkit2gtk
-	#umc
-	#'go'
-	#'base-devel'
-	#btop
-	xdg-desktop-portal-gtk
-	xdg-desktop-portal
-	xdg-desktop-portal-xapp
-	eza
-	python-pip
-	python-gobject
-	python-screeninfo
-	tumbler
-	brightnessctl
-	nm-connection-editor
-	network-manager-applet
-	gtk4
-	gtk3
-	libadwaita
-	fuse2
-	imagemagick
-	jq
-	xclip
-	gnome-terminal
-	sync-gnome-theme-to-qt
-	blueberry
-	scrot
-	qt5ct
-	polkit-gnome
-	polkit
-	zsh
-	zsh-completions
-	fzf
-	pavucontrol
-	bigicons-papient
-	papirus-icon-theme
-	breeze-gtk
-	xcursor-breeze
-	nordic-darker-theme
-	xdg-user-dirs-gtk
-	gvfs
-	gvfs-afc
-	gvfs-mtp
-	gvfs-goa
-	gvfs-smb
-	gvfs-gphoto2
-	otf-font-awesome
-	ttf-fira-sans
-	ttf-fira-code
-	ttf-firacode-nerd
-	ttf-dejavu
-	ttf-nerd-fonts-symbols-with-biglinux
-	oh-my-posh-bin
-	checkupdates-with-aur
-	unarchiver
-	imv
-	ffmpegthumbnailer
-	wireplumber
-	qt5-svg
-	qt5-graphicaleffects
-	qt5-quickcontrols2
-	flatpak
-    pacseek
-	# Audio Dependencies
-	biglinux-meta-audio-config
-	portaudio
-	lib32-portaudio
-	pipewire-alsa
-	pipewire-pulse
-	#pipewire-jack
-	lib32-pipewire
-	libpipewire
-	lib32-libpipewire
-	#lib32-pipewire-jack
-	#pipewire-biglinux-config-git
-	gst-plugin-pipewire
-	manjaro-pipewire
-	pcaudiolib
-	sox
-	#Outros
-	libsndfile
-	lib32-libsndfile
-	xf86-input-elographics
-	xf86-input-evdev
-	xf86-input-libinput
-	xf86-input-vmmouse
-	xf86-input-void
-	timeshift
-	grub-btrfs-timeshift
-	grub-btrfs
-	amd-ucode
-	libxcvt
-	b43-fwcutter
-	glxinfo
-	gnome-disk-utility
-	simplescreenrecorder
-	python-pywal
-	#packages community
-	auto-tweaks-browser # Auto optimize brave, chromium, epiphany, falkon, firefox, google-chrome, opera and vivaldi
-	big-mount
-	comm-base-config # Package configuration BASE
-	#comm-webapps
-	#biglinux-driver-manager
-	#biglinux-noise-reduction-pipewire
-	#bigcontrolcenter-base      # Base files and libs to bigcontrolcenter interfaces
-	#big-store # A friendly interface using bigbashview
-	big-preload
-	#comm-restore-config        # Central de controle para restaurar configurações de ambiente e aplicativos
-	#drivers de vídeo
-	mhwd
-	mhwd-db
-	mhwd-biglinux
-	mhwd-amdgpu
-	mhwd-nvidia
-	mhwd-ati
-	mhwd-nvidia-470xx
-	xf86-video-amdgpu
-	vulkan-mesa-layers
-	lib32-vulkan-mesa-layers
-	vulkan-headers
-	vulkan-tools
-	vulkan-icd-loader
-	lib32-vulkan-icd-loader
-	vulkan-intel
-	lib32-vulkan-intel
-	vulkan-radeon
-	lib32-vulkan-radeon
-	mesa
-	lib32-mesa
-	# X11 Server and components
-	xorg-server
-	xorg-xinit
-	xorg-xrandr
-	xorg-xrdb
-	xorg-xbacklight
-	xorg-xinput
-	xorg-xkill
-	xorg-xprop
-	xorg-xhost
-	# i3wm e componentes para funcionamento e configuração
-	i3lock
-	i3status
-	dmenu
-	rofi
-	polybar
-	zenity
-	feh
-	dunst
-	xkeyboard-config
-	nitrogen
-	wmutils
-	lxappearance
-	clipit
-	yad
-	xfce4-power-manager
-	#tela de login
-	lightdm
-	lightdm-slick-greeter
-	lightdm-settings
-	arandr
-	# Extra
-	clang
-	gnu-free-fonts
-	harfbuzz-icu
-	hyphen
-	inotify-tools
-	inxi
-	libavif
-	lsof
-	ncdu
-	sysstat
-	chafa
-	firefox
-	thunar
-	thunar-archive-plugin
-	thunar-volman
-	evince
-	libreoffice-fresh
-	galculator
-	xed
-	pix
-	mpv
-	pantheon-calendar
+    # Componentes Cosmic
+    cosmic-files
+    cosmic-applets
+    cosmic-app-library
+    cosmic-bg
+    cosmic-greeter
+    cosmic-launcher
+    cosmic-idle
+    cosmic-notifications
+    cosmic-osd
+    cosmic-panel
+    cosmic-settings-daemon
+    cosmic-screenshot
+    cosmic-terminal
+    cosmic-settings
+    cosmic-text-editor
+    cosmic-workspaces
+    cosmic-store
+    # Ferramentas relacionadas ao portal e integração
+    xdg-desktop-portal-cosmic
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal
+    xdg-desktop-portal-xapp
 
+    # Utilitários e ferramentas gerais
+    eza
+    python-pip
+    python-gobject
+    python-screeninfo
+    tumbler
+    brightnessctl
+
+    # Gerenciamento de rede
+    nm-connection-editor
+    
+
+    # Dependências GTK e temas
+    gtk4
+    gtk3
+    libadwaita
+    fuse2
+    imagemagick
+    jq
+    xclip
+    sync-gnome-theme-to-qt
+    blueberry
+    scrot
+    qt5ct
+    polkit-gnome
+    polkit
+
+    # Shells e complementos
+    zsh
+    zsh-completions
+    fzf
+
+    # Controle de som
+    pavucontrol
+    
+    # Navegador de Internet
+    firefox
+    
+    # Temas e ícones
+    bigicons-papient
+    papirus-icon-theme
+
+    # Diretórios e sistemas de arquivos
+    xdg-user-dirs-gtk
+    gvfs
+    gvfs-afc
+    gvfs-mtp
+    gvfs-goa
+    gvfs-smb
+    gvfs-gphoto2
+
+    # Fontes
+    otf-font-awesome
+    ttf-fira-sans
+    ttf-fira-code
+    ttf-firacode-nerd
+    ttf-dejavu
+    ttf-nerd-fonts-symbols-with-biglinux
+
+    # Personalizações
+    oh-my-posh-bin
+    checkupdates-with-aur
+    unarchiver
+    7zip
+    imv
+    ffmpegthumbnailer
+
+    # Suporte multimídia e gráficos
+    wireplumber
+    qt5-svg
+    qt5-graphicaleffects
+    qt5-quickcontrols2
+
+    # Flatpak
+    flatpak
+
+    # Áudio e PipeWire
+    biglinux-meta-audio-config
+    portaudio
+    lib32-portaudio
+    pipewire-alsa
+    pipewire-pulse
+    lib32-pipewire
+    libpipewire
+    lib32-libpipewire
+    gst-plugin-pipewire
+    manjaro-pipewire
+    pcaudiolib
+    sox
+
+    # Outros utilitários
+    libsndfile
+    lib32-libsndfile
+    xf86-input-elographics
+    xf86-input-evdev
+    xf86-input-libinput
+    xf86-input-vmmouse
+    xf86-input-void
+    timeshift
+    grub-btrfs-timeshift
+    grub-btrfs
+    amd-ucode
+    libxcvt
+    b43-fwcutter
+    glxinfo
+    gnome-disk-utility
+    simplescreenrecorder
+    python-pywal
+
+   # Pacotes da comunidade
+   comm-base-config
+   auto-tweaks-browser 
+   big
+   bigcontrolcenter-base 
+   comm-webapps            
+   comm-restore-config
+
+    # Ferramentas específicas do Big Linux
+    big-mount
+    comm-base-config
+    big-preload
+
+    # Drivers de vídeo
+    mhwd
+    mhwd-db
+    mhwd-biglinux
+    mhwd-amdgpu
+    mhwd-nvidia
+    mhwd-ati
+    mhwd-nvidia-470xx
+    xf86-video-amdgpu
+    vulkan-mesa-layers
+    lib32-vulkan-mesa-layers
+    vulkan-headers
+    vulkan-tools
+    vulkan-icd-loader
+    lib32-vulkan-icd-loader
+    vulkan-intel
+    lib32-vulkan-intel
+    vulkan-radeon
+    lib32-vulkan-radeon
+    mesa
+    lib32-mesa
+    
+    # Xorg
+    xorg-server              # Servidor X11
+    xorg-xinit               # Inicialização do Xorg
+    xorg-xrandr              # Configuração de resolução e monitores
+    xorg-xsetroot            # Permite definir o papel de parede no Xorg
+    xorg-xrdb                # Banco de dados de recursos do X
+    # Wayland
+    wlroots                  # Biblioteca para composição no Wayland
+    xorg-xwayland            # Suporte para aplicativos X11 no Wayland
+    wayland                  # Protocolo Wayland
+    wayland-utils            # Ferramentas para Wayland
+    wlr-randr                # Alternativa ao xrandr para Wayland
+
+    # Ferramentas extras e utilitários
+    clang
+    notifications-daemon
+    polkit
+    packagekit
+    gnu-free-fonts
+    harfbuzz-icu
+    hyphen
+    inotify-tools
+    inxi
+    libavif
+    lsof
+    ncdu
+    sysstat
+    chafa
+    firefox
+    papers
+    libreoffice-fresh
+    gnome-calculator
+    xed
+    pix
+    vlc
+    polkit
+    packagekit
+    
 )
 
+# Automatically detect and use the correct install file
 if [ -e "${pkgname}.install" ]; then
 	install=${pkgname}.install
 elif [ -e "pkgbuild.install" ]; then
@@ -209,23 +233,17 @@ fi
 package() {
 	cd "${srcdir}/${pkgname}"
 
-	mkdir -p "${pkgdir}/usr/share/${pkgname}"
+#	mkdir -p "${pkgdir}/usr/share/${pkgname}"
+  install -dm755 "${pkgdir}/usr/share/${pkgname}"
 	printf "%s\n" "${optdepends[@]}" >"${pkgdir}/usr/share/${pkgname}/optdepends"
 
-	# Determine the correct source directory
-	if [ -d "${pkgname}" ]; then
-		srcdir="${srcdir}/${pkgname}/${pkgname}"
-	else
-		srcdir="${srcdir}/${pkgname}"
-	fi
-
-	# Install files
-	local dirs=("usr" "etc" "opt")
-	for dir in "${dirs[@]}"; do
-		if [ -d "${srcdir}/${dir}" ]; then
-			cp -a "${srcdir}/${dir}" "${pkgdir}/"
-		fi
-	done
+  # Copiar a estrutura de /etc, /usr e /opt para /usr/share/${pkgname}
+  local dirs=("usr" "etc" "opt")
+  for dir in "${dirs[@]}"; do
+    if [ -d "${srcdir}/${pkgname}/${dir}" ]; then
+      cp -a "${srcdir}/${pkgname}/${dir}" "${pkgdir}/usr/share/${pkgname}/"
+    fi
+  done
 
 	# Install license file if present
 	if [ -f "LICENSE" ]; then
@@ -237,3 +255,4 @@ package() {
 		install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
 	fi
 }
+

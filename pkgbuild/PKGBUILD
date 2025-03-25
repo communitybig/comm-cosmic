@@ -10,252 +10,244 @@ license=('MIT')
 url="https://github.com/communitybig/${pkgname}"
 source=("git+${url}.git")
 md5sums=('SKIP')
+
+# Remover duplicatas e organizar dependências
 depends=(
-    cosmic-greeter
-    cosmic-session
+    'cosmic-greeter'
+    'cosmic-session'
 )
+
 optdepends=(
     # Componentes Cosmic
-    cosmic-files
-    cosmic-applets
-    cosmic-app-library
-    cosmic-bg
-    cosmic-greeter
-    cosmic-launcher
-    cosmic-idle
-    cosmic-notifications
-    cosmic-osd
-    cosmic-panel
-    cosmic-settings-daemon
-    cosmic-screenshot
-    cosmic-terminal
-    cosmic-settings
-    cosmic-text-editor
-    cosmic-workspaces
-    cosmic-store
-    # Ferramentas relacionadas ao portal e integração
-    xdg-desktop-portal-cosmic
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal
-    xdg-desktop-portal-xapp
+    'cosmic-files'
+    'cosmic-applets'
+    'cosmic-app-library'
+    'cosmic-bg'
+    'cosmic-greeter'
+    'cosmic-launcher'
+    'cosmic-idle'
+    'cosmic-notifications'
+    'cosmic-osd'
+    'cosmic-panel'
+    'cosmic-settings-daemon'
+    'cosmic-screenshot'
+    'cosmic-terminal'
+    'cosmic-settings'
+    'cosmic-text-editor'
+    'cosmic-workspaces'
+    'cosmic-store'
 
-    # Utilitários e ferramentas gerais
-    eza
-    python-pip
-    python-gobject
-    python-screeninfo
-    tumbler
-    brightnessctl
+    # Ferramentas relacionadas ao portal e integração
+    'xdg-desktop-portal-cosmic'
+    'xdg-desktop-portal-gtk'
+    'xdg-desktop-portal'
+    'xdg-desktop-portal-xapp'
+
+    # Utilitários gerais
+    'eza'
+    'python-pip'
+    'python-gobject'
+    'python-screeninfo'
+    'tumbler'
+    'brightnessctl'
 
     # Gerenciamento de rede
-    nm-connection-editor
-    
+    'nm-connection-editor'
 
     # Dependências GTK e temas
-    gtk4
-    gtk3
-    libadwaita
-    fuse2
-    imagemagick
-    jq
-    xclip
-    sync-gnome-theme-to-qt
-    blueberry
-    scrot
-    qt5ct
-    polkit-gnome
-    polkit
+    'gtk4'
+    'gtk3'
+    'libadwaita'
+    'fuse2'
+    'imagemagick'
+    'jq'
+    'xclip'
+    'sync-gnome-theme-to-qt'
+    'blueberry'
+    'scrot'
+    'qt5ct'
+    'polkit-gnome'
+    'polkit'
 
     # Shells e complementos
-    zsh
-    zsh-completions
-    fzf
+    'zsh'
+    'zsh-completions'
+    'fzf'
 
-    # Controle de som
-    pavucontrol
+    # Áudio
+    'pavucontrol'
     
-    # Navegador de Internet
-    firefox
+    # Navegador
+    'firefox'
     
     # Temas e ícones
-    bigicons-papient
-    papirus-icon-theme
+    'bigicons-papient'
+    'papirus-icon-theme'
 
-    # Diretórios e sistemas de arquivos
-    xdg-user-dirs-gtk
-    gvfs
-    gvfs-afc
-    gvfs-mtp
-    gvfs-goa
-    gvfs-smb
-    gvfs-gphoto2
+    # Sistemas de arquivos
+    'xdg-user-dirs-gtk'
+    'gvfs'
+    'gvfs-afc'
+    'gvfs-mtp'
+    'gvfs-goa'
+    'gvfs-smb'
+    'gvfs-gphoto2'
 
     # Fontes
-    otf-font-awesome
-    ttf-fira-sans
-    ttf-fira-code
-    ttf-firacode-nerd
-    ttf-dejavu
-    ttf-nerd-fonts-symbols-with-biglinux
+    'otf-font-awesome'
+    'ttf-fira-sans'
+    'ttf-fira-code'
+    'ttf-firacode-nerd'
+    'ttf-dejavu'
+    'ttf-nerd-fonts-symbols-with-biglinux'
 
-    # Personalizações
-    oh-my-posh-bin
-    checkupdates-with-aur
-    unarchiver
-    7zip
-    imv
-    ffmpegthumbnailer
+    # Utilitários
+    'oh-my-posh-bin'
+    'checkupdates-with-aur'
+    'unarchiver'
+    '7zip'
+    'imv'
+    'ffmpegthumbnailer'
 
-    # Suporte multimídia e gráficos
-    wireplumber
-    qt5-svg
-    qt5-graphicaleffects
-    qt5-quickcontrols2
+    # Multimídia e gráficos
+    'wireplumber'
+    'qt5-svg'
+    'qt5-graphicaleffects'
+    'qt5-quickcontrols2'
 
     # Flatpak
-    flatpak
+    'flatpak'
 
     # Áudio e PipeWire
-    biglinux-meta-audio-config
-    portaudio
-    lib32-portaudio
-    pipewire-alsa
-    pipewire-pulse
-    lib32-pipewire
-    libpipewire
-    lib32-libpipewire
-    gst-plugin-pipewire
-    manjaro-pipewire
-    pcaudiolib
-    sox
+    'biglinux-meta-audio-config'
+    'portaudio'
+    'lib32-portaudio'
+    'pipewire-alsa'
+    'pipewire-pulse'
+    'lib32-pipewire'
+    'libpipewire'
+    'lib32-libpipewire'
+    'gst-plugin-pipewire'
+    'manjaro-pipewire'
+    'pcaudiolib'
+    'sox'
 
     # Outros utilitários
-    libsndfile
-    lib32-libsndfile
-    xf86-input-elographics
-    xf86-input-evdev
-    xf86-input-libinput
-    xf86-input-vmmouse
-    xf86-input-void
-    timeshift
-    grub-btrfs-timeshift
-    grub-btrfs
-    amd-ucode
-    libxcvt
-    b43-fwcutter
-    glxinfo
-    gnome-disk-utility
-    simplescreenrecorder
-    python-pywal
+    'libsndfile'
+    'lib32-libsndfile'
+    'xf86-input-elographics'
+    'xf86-input-evdev'
+    'xf86-input-libinput'
+    'xf86-input-vmmouse'
+    'xf86-input-void'
+    'timeshift'
+    'grub-btrfs-timeshift'
+    'grub-btrfs'
+    'amd-ucode'
+    'libxcvt'
+    'b43-fwcutter'
+    'glxinfo'
+    'gnome-disk-utility'
+    'simplescreenrecorder'
+    'python-pywal'
 
-  # Pacotes da comunidade
-  comm-base-config
-  auto-tweaks-browser 
-  big
-  bigcontrolcenter-base 
-  comm-webapps            
-  comm-restore-config
-  #chili-utils
-  #chili-iso2usb
-  #chili-clonedisk
+    # Pacotes da comunidade
+    'comm-base-config'
+    'auto-tweaks-browser'
+    'big'
+    'bigcontrolcenter-base'
+    'comm-webapps'
+    'comm-restore-config'
 
-    # Ferramentas específicas do Big Linux
-    big-mount
-    comm-base-config
-    big-preload
+    # Ferramentas Big Linux
+    'big-mount'
+    'big-preload'
 
     # Drivers de vídeo
-    mhwd
-    mhwd-db
-    mhwd-biglinux
-    mhwd-amdgpu
-    mhwd-nvidia
-    mhwd-ati
-    mhwd-nvidia-470xx
-    xf86-video-amdgpu
-    vulkan-mesa-layers
-    lib32-vulkan-mesa-layers
-    vulkan-headers
-    vulkan-tools
-    vulkan-icd-loader
-    lib32-vulkan-icd-loader
-    vulkan-intel
-    lib32-vulkan-intel
-    vulkan-radeon
-    lib32-vulkan-radeon
-    mesa
-    lib32-mesa
+    'mhwd'
+    'mhwd-db'
+    'mhwd-biglinux'
+    'mhwd-amdgpu'
+    'mhwd-nvidia'
+    'mhwd-ati'
+    'mhwd-nvidia-470xx'
+    'xf86-video-amdgpu'
+    'vulkan-mesa-layers'
+    'lib32-vulkan-mesa-layers'
+    'vulkan-headers'
+    'vulkan-tools'
+    'vulkan-icd-loader'
+    'lib32-vulkan-icd-loader'
+    'vulkan-intel'
+    'lib32-vulkan-intel'
+    'vulkan-radeon'
+    'lib32-vulkan-radeon'
+    'mesa'
+    'lib32-mesa'
     
     # Xorg
-    xorg-server              # Servidor X11
-    xorg-xinit               # Inicialização do Xorg
-    xorg-xrandr              # Configuração de resolução e monitores
-    xorg-xsetroot            # Permite definir o papel de parede no Xorg
-    xorg-xrdb                # Banco de dados de recursos do X
-    # Wayland
-    wlroots                  # Biblioteca para composição no Wayland
-    xorg-xwayland            # Suporte para aplicativos X11 no Wayland
-    wayland                  # Protocolo Wayland
-    wayland-utils            # Ferramentas para Wayland
-  wlr-randr                # Alternativa ao xrandr para Wayland
+    'xorg-server'              # Servidor X11
+    'xorg-xinit'               # Inicialização do Xorg
+    'xorg-xrandr'              # Configuração de resolução e monitores
+    'xorg-xsetroot'            # Papel de parede no Xorg
+    'xorg-xrdb'                # Banco de dados de recursos do X
 
-    # Ferramentas extras e utilitários
-    clang
-    notifications-daemon
-    polkit
-    packagekit
-    gnu-free-fonts
-    harfbuzz-icu
-    hyphen
-    inotify-tools
-    inxi
-    libavif
-    lsof
-    ncdu
-    sysstat
-    chafa
-    firefox
-    papers
-    libreoffice-fresh
-    gnome-calculator
-    xed
-    pix
-    vlc
-    polkit
-    packagekit
-    
+    # Wayland
+    'wlroots'                  # Biblioteca para composição no Wayland
+    'xorg-xwayland'            # Suporte para aplicativos X11 no Wayland
+    'wayland'                  # Protocolo Wayland
+    'wayland-utils'            # Ferramentas para Wayland
+    'wlr-randr'                # Alternativa ao xrandr para Wayland
+
+    # Ferramentas extras
+    'clang'
+    'notifications-daemon'
+    'packagekit'
+    'gnu-free-fonts'
+    'harfbuzz-icu'
+    'hyphen'
+    'inotify-tools'
+    'inxi'
+    'libavif'
+    'lsof'
+    'ncdu'
+    'sysstat'
+    'chafa'
+    'papers'
+    'libreoffice-fresh'
+    'gnome-calculator'
+    'xed'
+    'pix'
+    'vlc'
 )
 
-# Automatically detect and use the correct install file
-if [ -e "${pkgname}.install" ]; then
-	install=${pkgname}.install
-elif [ -e "pkgbuild.install" ]; then
-	install=pkgbuild.install
-fi
+# Remover verificações de instalação redundantes
+install=${pkgname}.install
 
 package() {
-	cd "${srcdir}/${pkgname}"
+    cd "${srcdir}/${pkgname}"
 
-#	mkdir -p "${pkgdir}/usr/share/${pkgname}"
-  install -dm755 "${pkgdir}/usr/share/${pkgname}"
-	printf "%s\n" "${optdepends[@]}" >"${pkgdir}/usr/share/${pkgname}/optdepends"
+    # Criar diretório de compartilhamento
+    install -dm755 "${pkgdir}/usr/share/${pkgname}"
 
-  # Copiar a estrutura de /etc, /usr e /opt para /usr/share/${pkgname}
-  local dirs=("usr" "etc" "opt")
-  for dir in "${dirs[@]}"; do
-    if [ -d "${srcdir}/${pkgname}/${dir}" ]; then
-      cp -a "${srcdir}/${pkgname}/${dir}" "${pkgdir}/usr/share/${pkgname}/"
+    # Salvar lista de optdepends em um arquivo
+    printf "%s\n" "${optdepends[@]}" > "${pkgdir}/usr/share/${pkgname}/optdepends"
+
+    # Copiar estruturas de diretórios
+    local dirs=("usr" "etc" "opt")
+    for dir in "${dirs[@]}"; do
+        if [ -d "${srcdir}/${pkgname}/${dir}" ]; then
+            cp -a "${srcdir}/${pkgname}/${dir}" "${pkgdir}/usr/share/${pkgname}/"
+        fi
+    done
+
+    # Instalar licença se existir
+    if [ -f "LICENSE" ]; then
+        install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
     fi
-  done
 
-	# Install license file if present
-	if [ -f "LICENSE" ]; then
-		install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
-	fi
-
-	# Install documentation if present
-	if [ -f "README.md" ]; then
-		install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
-	fi
+    # Instalar README se existir
+    if [ -f "README.md" ]; then
+        install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+    fi
 }
-

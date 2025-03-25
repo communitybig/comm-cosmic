@@ -29,11 +29,11 @@ export DOTPREFIX="  ${black}::${reset} "
 export bold="\033[1m"
 export reset="\033[0m"
 declare IS_UPGRADE=false
-declare DM='lightdm'
-declare WM='i3wm'
+declare DM='cosmic-greeter'
+declare WM='cosmic'
 declare pkgname=comm-"${WM}"
-declare servicesToEnable=("${DM}" avahi-daemon sshd cups bluetooth)
-declare servicesToDisable=(lxdm sddm gdm)
+declare servicesToEnable=("${DM}" avahi-daemon sshd cups bluetooth, NetworkManager, cosmic-greeter.service)
+declare servicesToDisable=(lxdm sddm gdm, lightdm)
 
 msg() {
 	local msg="$1"
@@ -94,6 +94,60 @@ sh_start_dbus_in_chroot() {
 		export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 		export DBUS_SYSTEM_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 	fi
+}
+
+# Função para manipular arquivos skel
+copy_skel_files() {
+    local target_dir="$1"
+    local mode="$2"  # "all" para copiar tudo, "new" para copiar apenas novos
+    
+    # Verificar se o diretório existe
+    if [[ ! -d "$target_dir" ]]; then
+        mkdir -p "$target_dir" &>/dev/null
+    fi
+    
+    if [[ "$mode" == "all" ]]; then
+        # Copia todos os arquivos de skel (para instalação inicial)
+        msg "Copying skel to $target_dir..."
+        cp -Rfpa /etc/skel/. "$target_dir/" &>/dev/null
+        log_ok "Full skel copy complete"
+    elif [[ "$mode" == "new" ]]; then
+        # Copia apenas arquivos que não existem (para atualização)
+        msg "Copying only new skel files to $target_dir..."
+        
+        # Verifica se rsync está disponível
+        if command -v rsync >/dev/null; then
+            # Usar rsync com opção --ignore-existing
+            rsync -a --ignore-existing /etc/skel/ "$target_dir/" &>/dev/null
+            log_ok "Copied new files only using rsync"
+        else
+            # Fallback para método mais manual se rsync não estiver disponível
+            find /etc/skel -type f -print0 | while IFS= read -r -d '' file; do
+                # Obtém caminho relativo
+                rel_path="${file#/etc/skel/}"
+                # Verifica se o arquivo já existe no destino
+                if [[ ! -e "$target_dir/$rel_path" ]]; then
+                    # Cria diretório pai se necessário
+                    mkdir -p "$(dirname "$target_dir/$rel_path")" &>/dev/null
+                    # Copia o arquivo
+                    cp -p "$file" "$target_dir/$rel_path" &>/dev/null
+                fi
+            done
+            log_ok "Copied new files only using find/cp"
+        fi
+    fi
+}
+
+# Função para adicionar configuração ao arquivo Cosmic se não existir
+add_cosmic_config_if_not_exists() {
+    local config_file="$1"
+    local pattern="$2"
+    local config_line="$3"
+    
+    if [[ -f "$config_file" ]] && ! grep -q "$pattern" "$config_file"; then
+        echo -e "\n# Added by ${pkgname} upgrade\n$config_line" >> "$config_file"
+        log_ok "Added new configuration to $config_file"
+    fi
 }
 
 post_install() {
@@ -201,9 +255,16 @@ EOF
 	fi
 	user_home=$(getent passwd "$user" | cut -d: -f6)
 
-	msg "Copying skel to $user_home..."
-	mkdir -p "$user_home" &>/dev/null
-	cp -Rfpa /etc/skel/. "$user_home/" &>/dev/null
+	# Gerenciamento de arquivos do skel
+	if ! $IS_UPGRADE; then
+	    # Instalação inicial - copia todos os arquivos
+	    copy_skel_files "$user_home" "all"
+	else
+	    # Atualização - copia apenas arquivos novos
+	    copy_skel_files "$user_home" "new"
+	    
+	    
+	fi
 
 	msg "Setting user folder permissions in ${user_home}"
 	chown -R "$user:$user" "$user_home" &>/dev/null
@@ -280,9 +341,11 @@ EOF
 	else
 		msg "Upgrade complete."
 	fi
+
 }
 
 post_upgrade() {
 	IS_UPGRADE=true
 	post_install
+
 }

@@ -1,4 +1,4 @@
-# Maintainer: Float <floatingfloatskies@protonmail.com>
+# Maintainer: Ari Novais (Float) <floatingfloatskies@protonmail.com>
 # Contributor: Narayan Silva <narayanlimasilva@gmail.com>
 
 pkgname=comm-cosmic
@@ -8,19 +8,19 @@ pkgrel=1
 arch=('any')
 license=('MIT')
 url="https://github.com/communitybig/${pkgname}"
-source=("git+${url}.git#commit=COMMIT_HASH")
+source=("git+${url}.git")
 md5sums=('SKIP')
 depends=(
     cosmic
     cosmic-greeter
 )
 optdepends=(
-    # Dependências de portal e integração
+    # Ferramentas relacionadas ao portal e integração
     xdg-desktop-portal-gtk
     xdg-desktop-portal
     xdg-desktop-portal-xapp
 
-    # Ferramentas e utilitários
+    # Utilitários e ferramentas gerais
     eza
     python-pip
     python-gobject
@@ -206,106 +206,25 @@ optdepends=(
 )
 
 package() {
+    # Definir diretórios e variáveis
     cd "${srcdir}/${pkgname}"
-
-    mkdir -p "${pkgdir}/usr/share/${pkgname}"
-    printf "%s\n" "${optdepends[@]}" >"${pkgdir}/usr/share/${pkgname}/optdepends"
-
-    # Determinar o diretório correto da fonte
-    if [ -d "${pkgname}" ]; then
-        srcdir="${srcdir}/${pkgname}/${pkgname}"
-    else
-        srcdir="${srcdir}/${pkgname}"
-    fi
-
-    # Instalar arquivos
-    local dirs=("usr" "etc" "opt")
-    for dir in "${dirs[@]}"; do
-        if [ -d "${srcdir}/${dir}" ]; then
-            cp -a "${srcdir}/${dir}" "${pkgdir}/"
-        fi
-    done
+    local config_dir="${pkgdir}/etc/cosmic-greeter"
+    local backgrounds_dir="${pkgdir}/usr/share/backgrounds"
 
     # Criar os diretórios necessários
-    mkdir -p "${pkgdir}/etc/cosmic-greeter"
-    mkdir -p "${pkgdir}/usr/share/backgrounds"
-    mkdir -p "${pkgdir}/usr/share/libalpm/scripts"
-    mkdir -p "${pkgdir}/usr/share/libalpm/hooks"
+    mkdir -p "${config_dir}"
+    mkdir -p "${backgrounds_dir}"
 
     # Instalar o arquivo de configuração do Cosmic Greeter
-    echo "[Greeter]" > "${pkgdir}/etc/cosmic-greeter/config.toml"
-    echo "background=/usr/share/backgrounds/owl_neighbourhood.jpg" >> "${pkgdir}/etc/cosmic-greeter/config.toml"
+    echo "[Greeter]" > "${config_dir}/config.toml"
+    echo "background=/usr/share/backgrounds/owl_neighbourhood.jpg" >> "${config_dir}/config.toml"
 
     # Verificar se há um wallpaper no repositório para copiar
     if [ -f "${srcdir}/owl_neighbourhood.jpg" ]; then
-        install -Dm644 "${srcdir}/owl_neighbourhood.jpg" "${pkgdir}/usr/share/backgrounds/owl_neighbourhood.jpg"
+        install -Dm644 "${srcdir}/owl_neighbourhood.jpg" "${backgrounds_dir}/owl_neighbourhood.jpg"
     else
         echo "Warning: Wallpaper não encontrado, criando um placeholder."
-        touch "${pkgdir}/usr/share/backgrounds/owl_neighbourhood.jpg"
-    fi
-
-    # Instalar o script e o hook
-    cat > "${pkgdir}/usr/share/libalpm/scripts/change-files" << 'EOF'
-#!/bin/bash
-
-# Diretorios e Arquivos
-configDir="/etc/cosmic-greeter"
-backupDir="/etc/cosmic-greeter/backup"
-configFile="${configDir}/config.toml"
-backupFile="${backupDir}/config.toml.original"
-customFile="${configDir}/config.toml.big"
-
-# Criar diretório de backup se não existir
-mkdir -p "${backupDir}"
-
-# Fazer backup do arquivo original se existir e ainda não tiver backup
-if [ -f "${configFile}" ] && [ ! -f "${backupFile}" ]; then
-    cp "${configFile}" "${backupFile}"
-    echo "Backup do Cosmic Greeter criado em ${backupFile}"
-fi
-
-# Verificar se o arquivo personalizado existe
-if [ -f "${customFile}" ]; then
-    # Copiar o arquivo personalizado
-    cp "${customFile}" "${configFile}"
-    echo "Configuração personalizada do cosmic-greeter aplicada com sucesso"
-    
-    # Definir permissões corretas
-    chmod 644 "${configFile}"
-    chown root:root "${configFile}"
-else
-    echo "ERRO: Arquivo personalizado não encontrado em ${customFile}" >&2
-    exit 1
-fi
-
-exit 0
-EOF
-
-    chmod 755 "${pkgdir}/usr/share/libalpm/scripts/change-files"
-    
-    cat > "${pkgdir}/usr/share/libalpm/hooks/change-files.hook" << 'EOF'
-[Trigger]
-Type = Package
-Operation = Install
-Operation = Upgrade
-Target = cosmic-greeter
-Target = comm-cosmic
-
-[Action]
-Description = Configurando wallpaper personalizado no Cosmic Greeter
-When = PostTransaction
-Exec = /usr/share/libalpm/scripts/change-files
-NeedsTargets
-EOF
-
-    # Instalar licença se disponível
-    if [ -f "LICENSE" ]; then
-        install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
-    fi
-
-    # Instalar documentação se disponível
-    if [ -f "README.md" ]; then
-        install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+        touch "${backgrounds_dir}/owl_neighbourhood.jpg"
     fi
 }
 
