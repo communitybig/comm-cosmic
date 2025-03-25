@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 # shellcheck source=/dev/null
 
-export TERM=${TERM:-xterm}
 export TERM=${TERM:-xterm-256color}
 
-# Defining color variables (bold only)
+# Definindo variáveis de cores
 export black="\033[1;30m"
 export red="\033[1;31m"
 export green="\033[1;32m"
@@ -14,338 +13,300 @@ export blue="\033[1;34m"
 export magenta="\033[1;35m"
 export cyan="\033[1;36m"
 export white="\033[1;37m"
-#
-export COL_NC='\e[0m' # No Color
+
+export COL_NC='\e[0m' # Sem Cor
 export COL_LIGHT_GREEN='\e[1;32m'
 export COL_LIGHT_RED='\e[1;31m'
 export TICK="${white}[${COL_LIGHT_GREEN}✓${COL_NC}${white}]"
 export CROSS="${white}[${COL_LIGHT_RED}✗${COL_NC}${white}]"
 export INFO="[i]"
-export DONE="${COL_LIGHT_GREEN} done!${COL_NC}"
+export DONE="${COL_LIGHT_GREEN} concluído!${COL_NC}"
 export OVER="\\r\\033[K"
 export DOTPREFIX="  ${black}::${reset} "
 
-# Setting variables for bold and reset
+# Definindo variáveis para negrito e reset
 export bold="\033[1m"
 export reset="\033[0m"
+
 declare IS_UPGRADE=false
 declare DM='cosmic-greeter'
 declare WM='cosmic'
 declare pkgname=comm-"${WM}"
-declare servicesToEnable=("${DM}" avahi-daemon sshd cups bluetooth, NetworkManager, cosmic-greeter.service)
-declare servicesToDisable=(lxdm sddm gdm, lightdm)
+declare servicesToEnable=(
+    "${DM}"
+    avahi-daemon
+    sshd
+    cups
+    bluetooth
+)
+declare servicesToDisable=(
+    lightdm
+    sddm
+    gdm
+)
 
 msg() {
-	local msg="$1"
-	echo -e "${green}==>[${pkgname}] ${bold}${yellow}${msg}${reset}" >&2
+    local msg="$1"
+    echo -e "${green}==>[${pkgname}] ${bold}${yellow}${msg}${reset}" >&2
 }
 
 log_ok() { echo -e "  ${TICK} ${*}${reset}"; }
 log_err() { echo -e "  ${CROSS} ${*}${reset}"; }
 
 die() {
-	local msg=$1
-	shift
-	#printf "  %b %s\\n" "${CROSS}" "${red}${msg}${reset}"
-	echo -e "  ${CROSS} ${red}${msg}${reset}"
-	sh_restoring_lock
-	exit 1
+    local msg=$1
+    shift
+    echo -e "  ${CROSS} ${red}${msg}${reset}"
+    sh_restoring_lock
+    exit 1
 }
 
 sh_load_optdepends() {
-	local info_file="/usr/share/${pkgname}/optdepends"
+    local info_file="/usr/share/${pkgname}/optdepends"
 
-	if [[ -f "$info_file" && -r "$info_file" ]]; then
-		mapfile -t OPTDEPENDS <"$info_file"
-	else
-		msg "${red}FATAL: Something went wrong! File '$info_file' not found or without read permission."
-		msg "${red}FATAL: Something went wrong! File '$info_file' not found or without read permission."
-	fi
+    if [[ -f "$info_file" && -r "$info_file" ]]; then
+        mapfile -t OPTDEPENDS <"$info_file"
+    else
+        msg "${red}FATAL: Arquivo de dependências opcional '$info_file' não encontrado ou sem permissão de leitura."
+        OPTDEPENDS=()
+    fi
 }
 
 sh_restoring_lock() {
-	msg "Restauring pacman lock: /var/lib/pacman/db.lck"
-	touch /var/lib/pacman/db.lck &>/dev/null
+    msg "Restaurando bloqueio do pacman: /var/lib/pacman/db.lck"
+    touch /var/lib/pacman/db.lck &>/dev/null
 }
 
 sh_check_package_exist() {
-	local pkg
-	for pkg in "${OPTDEPENDS[@]}"; do
-		if ! pacman -Qs "$pkg" &>/dev/null; then
-			if ! pacman -Ss "^$pkg$" &>/dev/null; then
-				die "Fatal: package '$pkg' not exist in repo"
-			fi
-		fi
-		log_ok "Check: ${cyan}$pkg"
-	done
+    local pkg
+    local not_installed=()
+    local not_found=()
+
+    # Verifica pacotes instalados localmente
+    for pkg in "${OPTDEPENDS[@]}"; do
+        if ! pacman -Qq "$pkg" &>/dev/null; then
+            not_installed+=("$pkg")
+        fi
+    done
+
+    # Verifica pacotes ausentes no repositório
+    if ((${#not_installed[@]})); then
+        for pkg in "${not_installed[@]}"; do
+            if ! pacman -Ssq "^$pkg$" &>/dev/null; then
+                not_found+=("$pkg")
+            fi
+        done
+    fi
+
+    # Se houver pacotes não encontrados, exibe erro
+    if ((${#not_found[@]})); then
+        die "Fatal: os seguintes pacotes não existem no repositório: ${not_found[*]}"
+    fi
+
+    for pkg in "${OPTDEPENDS[@]}"; do
+        log_ok "Verificação: ${cyan}$pkg"
+    done
 }
 
 sh_start_dbus_in_chroot() {
-	# Verifica se o D-Bus já está em execução
-	if ! pgrep -x "dbus-daemon" >/dev/null; then
-		# Cria o diretório para o socket do D-Bus
-		mkdir -p /run/dbus
-		chmod 755 /run/dbus
+    # Verifica se o D-Bus já está em execução
+    if ! pgrep -x "dbus-daemon" >/dev/null; then
+        # Cria o diretório para o socket do D-Bus
+        mkdir -p /run/dbus
+        chmod 755 /run/dbus
 
-		# Inicia o D-Bus
-		dbus-daemon --system --fork
+        # Inicia o D-Bus
+        dbus-daemon --system --fork
 
-		# Configura as variáveis de ambiente
-		export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
-		export DBUS_SYSTEM_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
-	fi
+        # Configura as variáveis de ambiente
+        export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+        export DBUS_SYSTEM_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+    fi
 }
 
-# Função para manipular arquivos skel
-copy_skel_files() {
-    local target_dir="$1"
-    local mode="$2"  # "all" para copiar tudo, "new" para copiar apenas novos
-    
-    # Verificar se o diretório existe
-    if [[ ! -d "$target_dir" ]]; then
-        mkdir -p "$target_dir" &>/dev/null
-    fi
-    
-    if [[ "$mode" == "all" ]]; then
-        # Copia todos os arquivos de skel (para instalação inicial)
-        msg "Copying skel to $target_dir..."
-        cp -Rfpa /etc/skel/. "$target_dir/" &>/dev/null
-        log_ok "Full skel copy complete"
-    elif [[ "$mode" == "new" ]]; then
-        # Copia apenas arquivos que não existem (para atualização)
-        msg "Copying only new skel files to $target_dir..."
-        
-        # Verifica se rsync está disponível
-        if command -v rsync >/dev/null; then
-            # Usar rsync com opção --ignore-existing
-            rsync -a --ignore-existing /etc/skel/ "$target_dir/" &>/dev/null
-            log_ok "Copied new files only using rsync"
-        else
-            # Fallback para método mais manual se rsync não estiver disponível
-            find /etc/skel -type f -print0 | while IFS= read -r -d '' file; do
-                # Obtém caminho relativo
-                rel_path="${file#/etc/skel/}"
-                # Verifica se o arquivo já existe no destino
-                if [[ ! -e "$target_dir/$rel_path" ]]; then
-                    # Cria diretório pai se necessário
-                    mkdir -p "$(dirname "$target_dir/$rel_path")" &>/dev/null
-                    # Copia o arquivo
-                    cp -p "$file" "$target_dir/$rel_path" &>/dev/null
-                fi
-            done
-            log_ok "Copied new files only using find/cp"
+sh_copy_user_etc_usr_opt_files() {
+    msg "Configurando o pacote após instalação/atualização..."
+
+    # Copiar a estrutura para os diretórios de destino
+    local dirs=(usr etc opt)
+
+    for dir in "${dirs[@]}"; do
+        if [ -d "/usr/share/${pkgname}/${dir}" ]; then
+            # Copiar os arquivos e subdiretórios 
+            cp -a "/usr/share/${pkgname}/${dir}" "/"
         fi
-    fi
-}
-
-# Função para adicionar configuração ao arquivo Cosmic se não existir
-add_cosmic_config_if_not_exists() {
-    local config_file="$1"
-    local pattern="$2"
-    local config_line="$3"
-    
-    if [[ -f "$config_file" ]] && ! grep -q "$pattern" "$config_file"; then
-        echo -e "\n# Added by ${pkgname} upgrade\n$config_line" >> "$config_file"
-        log_ok "Added new configuration to $config_file"
-    fi
+    done
 }
 
 post_install() {
-	msg "Initializing system installation and configuration..."
+    msg "Inicializando instalação e configuração do sistema..."
 
-	sh_load_optdepends
+    sh_copy_user_etc_usr_opt_files
+    sh_load_optdepends
 
-	[[ -e /etc/environment ]] && source /etc/environment
-	: "${IN_CHROOT_INSTALLER:=false}"
-	: "${IN_CHROOT_INSTALLER_USER:=root}"
+    [[ -e /etc/environment ]] && source /etc/environment
+    : "${IN_CHROOT_INSTALLER:=false}"
+    : "${IN_CHROOT_INSTALLER_USER:=root}"
 
-	if $IN_CHROOT_INSTALLER; then
-		# sh_start_dbus_in_chroot
-		:
-	fi
+    if $IN_CHROOT_INSTALLER; then
+        sh_start_dbus_in_chroot
+    fi
 
-	if [[ -f /var/lib/pacman/db.lck ]]; then
-		msg "Removing pacman lock: /var/lib/pacman/db.lck"
-		rm -f /var/lib/pacman/db.lck &>/dev/null
-	fi
+    if [[ -f /var/lib/pacman/db.lck ]]; then
+        msg "Removendo bloqueio do pacman: /var/lib/pacman/db.lck"
+        rm -f /var/lib/pacman/db.lck &>/dev/null
+    fi
 
-	# Common packages for all GPUs
-	COMMON_PACKAGES=(
-		mhwd-biglinux
-		mesa
-		lib32-mesa
-		vulkan-mesa-layers
-		lib32-vulkan-mesa-layers
-	)
+    # Pacotes essenciais do Cosmic
+    COSMIC_PACKAGES=(
+        cosmic-session
+        xdg-desktop-portal-cosmic
+        wayland
+        pipewire
+        wireplumber
+    )
 
-  synchronizing_database() {
-    #pacman -Syu --quiet --noconfirm 1>/dev/null
-    pacman -Sy --quiet --noconfirm &>/dev/null
-	}
+    synchronizing_database() {
+        pacman -Sy --quiet --noconfirm &>/dev/null
+    }
 
-	install_packages() {
-#    pacman -S --quiet --noconfirm --needed --overwrite \* "$@" &>/dev/null
-    pacman -S --quiet --noconfirm --needed --overwrite \* "$@" 1>/dev/null
-	}
+    install_packages() {
+        pacman -S --quiet --noconfirm --needed --overwrite \* "$@" &>/dev/null
+    }
 
-	msg "Please wait, synchronizing databases..."
-	synchronizing_database
+    msg "Aguarde, sincronizando bancos de dados..."
+    synchronizing_database
 
-	msg "Installing common packages: ${COMMON_PACKAGES[*]}"
-	install_packages "${COMMON_PACKAGES[@]}"
+    msg "Instalando pacotes Cosmic: ${COSMIC_PACKAGES[*]}"
+    install_packages "${COSMIC_PACKAGES[@]}"
 
-	msg "Checking for the existence of packages..."
-	sh_check_package_exist
+    msg "Verificando existência dos pacotes..."
+    sh_check_package_exist
 
-	msg "Installing optdepends packages: ${OPTDEPENDS[*]}"
-	install_packages "${OPTDEPENDS[@]}"
+    # Verifica se há optdepends antes de tentar instalar
+    if ((${#OPTDEPENDS[@]})); then
+        msg "Instalando pacotes opcionais: ${OPTDEPENDS[*]}"
+        install_packages "${OPTDEPENDS[@]}"
+    fi
 
-	msg "Detecting GPU and installing appropriate drivers..."
-	GPU_INFO=$(lspci -nnk | grep -A3 -E "VGA|3D|Display")
+    msg "Detectando GPU e instalando drivers apropriados..."
+    GPU_INFO=$(lspci -nnk | grep -A3 -E "VGA|3D|Display")
 
-	if grep -qiw "NVIDIA" <<<"$GPU_INFO"; then
-		msg "NVIDIA detected! Installing drivers..."
+    if grep -qiw "NVIDIA" <<<"$GPU_INFO"; then
+        msg "NVIDIA detectada! Instalando drivers..."
+        KERNEL_VERSION=$(uname -r | cut -d '.' -f1,2 | tr -d '.')
+        KERNEL_PACKAGE="linux${KERNEL_VERSION}-nvidia"
 
-		msg "Detect kernel version and set package name"
-		KERNEL_VERSION=$(uname -r | cut -d '.' -f1,2 | tr -d '.')
-		KERNEL_PACKAGE="linux${KERNEL_VERSION}-nvidia"
+        msg "Kernel detectado: $KERNEL_VERSION"
+        msg "Instalando pacotes NVIDIA: $KERNEL_PACKAGE nvidia-utils nvidia-settings"
+        install_packages "$KERNEL_PACKAGE" nvidia-utils nvidia-settings
 
-		msg "Detected kernel: $KERNEL_VERSION"
-		msg "Installing NVIDIA packages: $KERNEL_PACKAGE nvidia-utils nvidia-settings"
-		install_packages "$KERNEL_PACKAGE" nvidia-utils nvidia-settings
+        msg "Bloqueando Nouveau..."
+        mkdir -p /etc/modprobe.d/ &>/dev/null
+        echo -e "blacklist nouveau\ninstall nouveau /bin/true" >/etc/modprobe.d/nouveau.conf
+        echo -e "blacklist nouveau\ninstall nouveau /bin/true" >/etc/modprobe.d/blacklist.conf
+    elif grep -qiw "Intel" <<<"$GPU_INFO"; then
+        msg "GPU Intel detectada! Instalando drivers..."
+        install_packages vulkan-intel lib32-vulkan-intel
+    elif grep -qEiw "AMD|ATI" <<<"$GPU_INFO"; then
+        msg "GPU AMD/ATI detectada! Instalando drivers..."
+        install_packages mesa-utils \
+            vulkan-icd-loader lib32-vulkan-icd-loader \
+            vulkan-headers vulkan-radeon lib32-vulkan-radeon \
+            mhwd-amdgpu mhwd-ati
+    else
+        msg "${yellow}Aviso: Nenhuma GPU compatível detectada. Pulando instalação de drivers.${reset}"
+    fi
 
-		msg "Blacklisting Nouveau..."
-		cat <<EOF | tee /etc/modprobe.d/nouveau.conf /etc/modprobe.d/blacklist.conf
-blacklist nouveau
-install nouveau /bin/true
+    msg "Configurando Cosmic Greeter como Gerenciador de Display..."
+    mkdir -p /etc/systemd/system/display-manager.service.d/
+    cat << EOF > /etc/systemd/system/display-manager.service.d/override.conf
+[Unit]
+Conflicts=gdm.service lightdm.service sddm.service
 EOF
-	elif grep -qiw "Intel" <<<"$GPU_INFO"; then
-		msg "Intel GPU detected! Installing drivers..."
-		install_packages vulkan-intel lib32-vulkan-intel
-		:
-	elif grep -qEiw "AMD|ATI" <<<"$GPU_INFO"; then
-		msg "AMD/ATI GPU detected! Installing drivers..."
-		install_packages mesa-utils \
-			vulkan-icd-loader lib32-vulkan-icd-loader \
-			vulkan-headers vulkan-radeon lib32-vulkan-radeon \
-			mhwd-amdgpu mhwd-ati
-		:
-	else
-		msg "${yellow}Warning: No compatible GPU detected. Skipping driver installation.${reset}"
-	fi
 
-	msg "Create the ${DM^} user if it doesn't exist"
-	if ! id "${DM}" >/dev/null; then
-		msg "Creating ${DM^} user..."
-		useradd -r -s /usr/bin/nologin -M -d /var/lib/${DM} ${DM} &>/dev/null
-	else
-		msg "${DM^} user already exists, skipping creation."
-	fi
+    msg "Configurando usuário..."
+    user=$(awk -F: '$3 >= 1000 && $3 < 65000 { print $1; exit }' /etc/passwd)
+    if $IN_CHROOT_INSTALLER; then
+        if [[ -n $IN_CHROOT_INSTALLER_USER || $IN_CHROOT_INSTALLER_USER != 'root' ]]; then
+            user=$IN_CHROOT_INSTALLER_USER
+        fi
+    fi
+    user_home=$(getent passwd "$user" | cut -d: -f6)
 
-	msg "Setting up ${DM^} directory..."
-	mkdir -p /var/lib/${DM} >/dev/null
-	chown -R ${DM}:${DM} /var/lib/${DM} >/dev/null
+    msg "Copiando arquivos de skel para $user_home..."
+    mkdir -p "$user_home" &>/dev/null
+    cp -Rfpa /etc/skel/. "$user_home/" &>/dev/null
 
-	msg "Setting up user..."
-	user=$(awk -F: '$3 >= 1000 && $3 < 65000 { print $1; exit }' /etc/passwd)
-	if $IN_CHROOT_INSTALLER; then
-		if [[ -n $IN_CHROOT_INSTALLER_USER || $IN_CHROOT_INSTALLER_USER != 'root' ]]; then
-			user=$IN_CHROOT_INSTALLER_USER
-		fi
-	fi
-	user_home=$(getent passwd "$user" | cut -d: -f6)
+    msg "Definindo permissões de pasta de usuário em ${user_home}"
+    chown -R "$user:$user" "$user_home" &>/dev/null
 
-	# Gerenciamento de arquivos do skel
-	if ! $IS_UPGRADE; then
-	    # Instalação inicial - copia todos os arquivos
-	    copy_skel_files "$user_home" "all"
-	else
-	    # Atualização - copia apenas arquivos novos
-	    copy_skel_files "$user_home" "new"
-	    
-	    
-	fi
+    if ! $IS_UPGRADE; then
+        msg "Ativando Cosmic Greeter..."
+        if ! systemctl enable cosmic-greeter &>/dev/null; then
+            msg "${red}Erro: Algo deu errado ao ativar o Cosmic Greeter"
+        fi
+    fi
 
-	msg "Setting user folder permissions in ${user_home}"
-	chown -R "$user:$user" "$user_home" &>/dev/null
+    for service in "${servicesToDisable[@]}"; do
+        if systemctl is-active --quiet "${service}"; then
+            msg "Desativando serviço ${service}..."
+            if ! systemctl disable "${service}" &>/dev/null; then
+                msg "${red}Erro: Algo deu errado ao desativar o serviço ${service}"
+            fi
+        else
+            msg "${green}Serviço ${service} já está inativo..."
+            continue
+        fi
+    done
 
-	if command -v nautilus >/dev/null; then
-		msg "Configuring Nautilus..."
-		if glib-compile-schemas /usr/share/glib-2.0/schemas/; then
-			msg "Nautilus schemas compiled successfully!"
-		else
-			msg "${yellow}Warning: Failed to compile Nautilus schemas. Some features may not work correctly.${reset}"
-		fi
-	fi
+    for service in "${servicesToEnable[@]}"; do
+        if systemctl is-active --quiet "${service}"; then
+            msg "${green}Serviço ${service} já está ativo..."
+            continue
+        else
+            if ! systemctl enable "${service}" &>/dev/null; then
+                msg "${red}Erro: Algo deu errado ao ativar o serviço ${service}"
+            fi
+        fi
+    done
 
-	if ! $IS_UPGRADE; then
-		msg "Enabling ${DM^}..."
-		if ! systemctl enable ${DM} 1>/dev/null; then
-			msg "${red}Error: It went wrong when activating ${DM^}"
-		fi
-	fi
+    if ! $IN_CHROOT_INSTALLER; then
+        if ! $IS_UPGRADE; then
+            msg "Aguarde, gerando initramfs para todos os kernels..."
+            mkinitcpio -P &>/dev/null
+        fi
 
-	for service in "${servicesToDisable[@]}"; do
-		if systemctl is-active --quiet "${service}"; then
-			msg "Disabling service ${service}..."
-			if ! systemctl disable "${service}" &>/dev/null; then
-				msg "${red}Error: It went wrong when desactivating service ${service}"
-			fi
-		else
-			msg "${green}Service ${service} is already inactive..."
-			continue
-		fi
-	done
+        msg "Configurando GRUB..."
+        # Alterar configuração do GRUB
+        if ! grep -qi "${WM}" /etc/default/grub; then
+            sed -i "s/^GRUB_DISTRIBUTOR=\"\(.*\)\"/GRUB_DISTRIBUTOR=\"\1 ${WM^}\"/" /etc/default/grub
+        fi
+        sed -i 's|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash plymouth.enable=1 loglevel=4 libata.noacpi=1 acpi=force apm=power-off nowatchdog tsc=nowatchdog cryptomgr.notests no_timer_check rcupdate.rcu_expedited=1 intel_pstate=active amd_pstate=active cpuidle.governor=teo split_lock_detect=off clearcpuid=514 transparent_hugepage=never skew_tick=1 intremap=off nosoftlockup audit=0 nomce systemd.show_status=auto rd.udev.log_level=3 apparmor=1 security=apparmor vconsole.font=Uni2-Fixed16 intel_iommu=on amd_iommu=on tdx=on nvme_load=yes nouveau.modeset=1 i915.modeset=1 amdgpu.modeset=1 radeon.si_support=0 radeon.cik_support=0 amdgpu.si_support=1 amdgpu.cik_support=1 nvidia.modeset=1 nvidia_drm.modeset=1 DEEPIN_GFXMODE="|' /etc/default/grub 1>/dev/null
 
-	for service in "${servicesToEnable[@]}"; do
-		if systemctl is-active --quiet "${service}"; then
-			msg "${green}Service ${service} is already active..."
-			continue
-		else
-			if ! systemctl enable "${service}" &>/dev/null; then
-				msg "${red}Error: It went wrong when activating service ${service}"
-			fi
-		fi
-	done
+        msg "Gerando arquivos de configuração do GRUB..."
+        update-grub &>/dev/null
+    fi
 
-	if ! $IN_CHROOT_INSTALLER; then
-		if ! $IS_UPGRADE; then
-			msg "Please wait, Generating initramfs for all kernels..."
-			mkinitcpio -P &>/dev/null
-		fi
+    # Restaurando bloqueio do pacman
+    sh_restoring_lock
 
-		msg "Configuring GRUB..."
-		# Change GRUB config
-		if ! grep -qi "${WM}" /etc/default/grub; then
-			sed -i "s/^GRUB_DISTRIBUTOR=\"\(.*\)\"/GRUB_DISTRIBUTOR=\"\1 ${WM^}\"/" /etc/default/grub
-		fi
-		sed -i 's|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash plymouth.enable=1 loglevel=4 libata.noacpi=1 acpi=force apm=power-off nowatchdog tsc=nowatchdog cryptomgr.notests no_timer_check rcupdate.rcu_expedited=1 intel_pstate=active amd_pstate=active cpuidle.governor=teo split_lock_detect=off clearcpuid=514 transparent_hugepage=never skew_tick=1 intremap=off nosoftlockup audit=0 nomce systemd.show_status=auto rd.udev.log_level=3 apparmor=1 security=apparmor vconsole.font=Uni2-Fixed16 intel_iommu=on amd_iommu=on tdx=on nvme_load=yes nouveau.modeset=1 i915.modeset=1 amdgpu.modeset=1 radeon.si_support=0 radeon.cik_support=0 amdgpu.si_support=1 amdgpu.cik_support=1 nvidia.modeset=1 nvidia_drm.modeset=1 DEEPIN_GFXMODE="|' /etc/default/grub 1>/dev/null
-
-		msg "Generating GRUB configuration files..."
-		update-grub &>/dev/null
-	fi
-
-	# Restauring pacman lock: /var/lib/pacman/db.lck
-	sh_restoring_lock
-
-	if ! $IS_UPGRADE; then
-		msg "Installation complete. Rebooting in 10 seconds..."
-		# Countdown before reboot
-		for i in $(seq 10 -1 1); do
-			printf "%d..." "$i"
-			sleep 1
-		done
-		echo
-		msg "Rebooting now..."
-		reboot
-	else
-		msg "Upgrade complete."
-	fi
-
+    if ! $IS_UPGRADE; then
+        msg "Instalação concluída. Reiniciando em 10 segundos..."
+        # Contagem regressiva antes de reiniciar
+        for i in $(seq 10 -1 1); do
+            printf "%d..." "$i"
+            sleep 1
+        done
+        echo
+        msg "Reiniciando agora..."
+        reboot
+    else
+        msg "Atualização concluída."
+    fi
 }
 
 post_upgrade() {
-	IS_UPGRADE=true
-	post_install
-
+    IS_UPGRADE=true
+    post_install
 }
